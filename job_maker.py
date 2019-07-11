@@ -3,14 +3,16 @@
 
 import os
 
-def make_macro():
+#global variables
+run_macro_name = 'run_Cryostat_neutron_U238'
+workdir='/project/lgrandi/mzks/mc/mc1/workdir'
+job_maker_dir = '/project/lgrandi/mzks/mc/job_maker'
+NevtEachBatch = 1000
+NBatch = 100
 
-	seed = 11
-	NofGen = 10
-	run_macro_name = 'run_Cryostat_neutron_U238'
+def make_macro(seed):
 
-	oofGen = 10
-	loaded_macro_fname = '/project/lgrandi/mzks/mc/mc/workdir/macros/XENONnT/' + run_macro_name + '.mac'
+	loaded_macro_fname = workdir+'/macros/XENONnT/' + run_macro_name + '.mac'
 	output_dirname = 'macro'
 	fin = open(loaded_macro_fname, mode='r')
 	os.makedirs('./'+run_macro_name+'/'+output_dirname, exist_ok=True)
@@ -24,16 +26,9 @@ def make_macro():
 			fout.write(line)
 	fout.close()
 
-def make_shell():
+def make_shell(seed):
 
-	seed = 11
-	NofGen = 10
-	run_macro_name = 'run_Cryostat_neutron_U238'
-	workdir='/project/lgrandi/mzks/mc/mc1/workdir'
-
-	NofEvt = 1000
-	NofGen = 10
-	loaded_shell_fname = '/project/lgrandi/mzks/mc/job_maker/run.sh'
+	loaded_shell_fname = job_maker_dir+'/shell.sh'
 	output_dirname = 'shell'
 	fin = open(loaded_shell_fname, mode='r')
 	os.makedirs('./'+run_macro_name+'/'+output_dirname, exist_ok=True)
@@ -43,7 +38,7 @@ def make_shell():
 	for line in fin:
 		
 		if 0 == line.find('    -n') :
-			fout.write('    -n '+str(NofEvt)+'\n')
+			fout.write('    -n '+str(NevtEathBatch)+'\n')
 		elif 0 == line.find('    -o') :
 			fout.write('    -o ${workdir}/output'+str(seed).zfill(4)+'.root \n')
 		elif 0 == line.find('workdir=') :
@@ -53,17 +48,9 @@ def make_shell():
 	fout.close()
 	os.chmod(foutname, 0o755)
 
-def make_batch():
+def make_batch(seed):
 
-	seed = 11
-	NofGen = 10
-	run_macro_name = 'run_Cryostat_neutron_U238'
-	workdir='/project/lgrandi/mzks/mc/mc1/workdir'
-
-	NofEvt = 1000
-	NofGen = 10
-	job_maker_dir = '/project/lgrandi/mzks/mc/job_maker'
-	loaded_batch_fname = '/project/lgrandi/mzks/mc/job_maker/batch.sh'
+	loaded_batch_fname = job_maker_dir+'/batch.sh'
 	output_dirname = 'batch'
 	fin = open(loaded_batch_fname, mode='r')
 	os.makedirs('./'+run_macro_name+'/'+output_dirname, exist_ok=True)
@@ -86,17 +73,7 @@ def make_batch():
 	fout.close()
 	os.chmod(foutname, 0o755)
 
-def make_throw():
-	NofBatchs = 1000
-
-	seed = 11
-	NofGen = 10
-	run_macro_name = 'run_Cryostat_neutron_U238'
-	workdir='/project/lgrandi/mzks/mc/mc1/workdir'
-
-	NofEvt = 1000
-	NofGen = 10
-	job_maker_dir = '/project/lgrandi/mzks/mc/job_maker'
+def make_throw(NofBatchs):
 
 	foutname = './'+run_macro_name+'/throw.sh'
 	fout = open(foutname, mode='w')
@@ -110,7 +87,12 @@ def make_throw():
 	os.chmod(foutname, 0o755)
 
 if __name__ == "__main__":
-	make_macro()
-	make_shell()
-	make_batch()
-	make_throw()
+
+	
+	for i in range(1, NBatch):
+	
+		make_macro(i)
+		make_shell(i)
+		make_batch(i)
+
+	make_throw(NBatch)
