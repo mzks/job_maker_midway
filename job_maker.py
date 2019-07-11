@@ -5,10 +5,10 @@ import os
 
 #global variables
 run_macro_name = 'run_Cryostat_neutron_U238'
-workdir='/project/lgrandi/mzks/mc/mc1/workdir'
+workdir='/project/lgrandi/mzks/mc/mc3/workdir'
 job_maker_dir = '/project/lgrandi/mzks/mc/job_maker'
-NevtEachBatch = 1000
-NBatch = 100
+NevtEachBatch = 10
+NBatch = 10
 
 def make_macro(seed):
 
@@ -38,15 +38,24 @@ def make_shell(seed):
 	for line in fin:
 		
 		if 0 == line.find('    -n') :
-			fout.write('    -n '+str(NevtEathBatch)+'\n')
+			fout.write('    -n '+str(NevtEachBatch)+'\\\n')
 		elif 0 == line.find('    -o') :
 			fout.write('    -o ${workdir}/output'+str(seed).zfill(4)+'.root \n')
+		elif 0 == line.find('    -f') :
+			fout.write('    -f '+job_maker_dir+'/'+run_macro_name+'/macro/s'+str(seed).zfill(4)+'.mac \\\n')
 		elif 0 == line.find('workdir=') :
 			fout.write('workdir='+workdir+'\n')
+		elif 0 == line.find('#SBATCH --job-name=') :
+			fout.write('#SBATCH --job-name=s'+str(seed).zfill(4)+'.sh\n')
+		elif 0 == line.find('#SBATCH --output=') :
+			fout.write('#SBATCH --output='+job_maker_dir+'/'+run_macro_name+'/log/s'+str(seed).zfill(4)+'.o \n')
+		elif 0 == line.find('#SBATCH --error=') :
+			fout.write('#SBATCH --error='+job_maker_dir+'/'+run_macro_name+'/log/s'+str(seed).zfill(4)+'.e \n')
 		else:
 			fout.write(line)
 	fout.close()
 	os.chmod(foutname, 0o755)
+	os.makedirs('./'+run_macro_name+'/'+'log', exist_ok=True)
 
 def make_batch(seed):
 
@@ -63,9 +72,9 @@ def make_batch(seed):
 		if 0 == line.find('#SBATCH --job-name=') :
 			fout.write('#SBATCH --job-name=s'+str(seed).zfill(4)+'.sh\n')
 		elif 0 == line.find('#SBATCH --output=') :
-			fout.write('#SBATCH --output='+job_maker_dir+'/'+run_macro_name+'/log/'+str(seed).zfill(4)+'.o \n')
+			fout.write('#SBATCH --output='+job_maker_dir+'/'+run_macro_name+'/log/s'+str(seed).zfill(4)+'.o \n')
 		elif 0 == line.find('#SBATCH --error=') :
-			fout.write('#SBATCH --error='+job_maker_dir+'/'+run_macro_name+'/log/'+str(seed).zfill(4)+'.e \n')
+			fout.write('#SBATCH --error='+job_maker_dir+'/'+run_macro_name+'/log/s'+str(seed).zfill(4)+'.e \n')
 		elif 0 == line.find('srun /bin/sh') :
 			fout.write('srun /bin/sh '+job_maker_dir+'/'+run_macro_name+'/'+output_dirname+'/s'+str(seed).zfill(4)+'.sh \n')
 		else:
@@ -80,7 +89,7 @@ def make_throw(NofBatchs):
 
 	fout.write('#! /bin/bash \n')
 	for i in range(1,NofBatchs+1):
-		batchpath = job_maker_dir+'/'+run_macro_name+'/batch/s'+str(i).zfill(4)+'.sh'
+		batchpath = job_maker_dir+'/'+run_macro_name+'/shell/s'+str(i).zfill(4)+'.sh'
 		fout.write('sbatch '+batchpath+'\n')
 
 	fout.close()
@@ -89,10 +98,10 @@ def make_throw(NofBatchs):
 if __name__ == "__main__":
 
 	
-	for i in range(1, NBatch):
+	for i in range(1, NBatch+1):
 	
 		make_macro(i)
 		make_shell(i)
-		make_batch(i)
+		#make_batch(i)
 
 	make_throw(NBatch)
