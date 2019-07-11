@@ -3,12 +3,12 @@
 
 import os
 
-#global variables
-run_macro_name = 'run_Cryostat_neutron_U238'
-workdir='/project/lgrandi/mzks/mc/mc3/workdir'
-job_maker_dir = '/project/lgrandi/mzks/mc/job_maker'
-NevtEachBatch = 10
-NBatch = 20
+# global variables
+run_macro_name = 'run_Cryostat_neutron_U238' # run macro name of Geant4
+workdir='/project/lgrandi/mzks/mc/mc/workdir' # Geant4 working directory witch has binary
+job_maker_dir = '/project/lgrandi/mzks/mc/job_maker' # ROOT of this script
+NevtEachBatch = 1000 # Number of Event in each batch
+NBatch = 100 # total batch number
 
 def make_macro(seed):
 
@@ -20,6 +20,7 @@ def make_macro(seed):
 
 	for line in fin:
 		
+		# If you want to add options, please add elif blocks here
 		if 0 == line.find('/run/random/setRandomSeed') :
 			fout.write('/run/random/setRandomSeed '+str(seed)+'\n')
 		else:
@@ -37,6 +38,7 @@ def make_shell(seed):
 
 	for line in fin:
 		
+		# If you want to add options, please add elif blocks here
 		if 0 == line.find('    -n') :
 			fout.write('    -n '+str(NevtEachBatch)+'\\\n')
 		elif 0 == line.find('    -o') :
