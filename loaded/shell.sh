@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=run.sh
-#SBATCH --output=
-#SBATCH --error=
+#SBATCH --output=run.sh.o
+#SBATCH --error=run.sh.e
 #SBATCH --time=24:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
@@ -25,7 +25,7 @@ module load clhep/2.3
 module load geant4/10.03.p02
 
 cd ${job_dir}
-source ${job_dir}/geant4make.sh
+source ${job_dir}/loaded/geant4make.sh
 source /software/geant4-10.03.p02-el7-x86_64/bin/geant4.sh
 
 cd ${workdir}
