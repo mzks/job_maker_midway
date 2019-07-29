@@ -15,8 +15,8 @@ SECONDS=0
 
 # specify the project name
 
-workdir=/project/lgrandi/mzks/mc/mc1/workdir
-job_dir=/project/lgrandi/mzks/mc/job_maker
+workdir=/dali/lgrandi/mzks/mc/mc1/workdir
+job_dir=/dali/lgrandi/mzks/mc/job_maker
 
 # load modules required by XENON G4
 module load midway2

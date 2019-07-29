@@ -5,8 +5,8 @@ import os
 
 # global variables
 run_macro_name = 'run_Cryostat_neutron_U238' # run macro name of Geant4
-workdir='/project/lgrandi/mzks/mc/mc/workdir' # Geant4 working directory witch has binary
-job_maker_dir = '/project/lgrandi/mzks/mc/job_maker' # ROOT of this script
+workdir='/dali/lgrandi/mzks/mc/mc1/workdir' # Geant4 working directory witch has binary
+job_maker_dir = '/dali/lgrandi/mzks/mc/job_maker' # ROOT of this script
 NevtEachBatch = 1000 # Number of Event in each batch
 NBatch = 100 # total batch number
 
@@ -50,14 +50,16 @@ def make_shell(seed):
 		elif 0 == line.find('#SBATCH --job-name=') :
 			fout.write('#SBATCH --job-name=s'+str(seed).zfill(4)+'.sh\n')
 		elif 0 == line.find('#SBATCH --output=') :
-			fout.write('#SBATCH --output='+job_maker_dir+'/made/'+run_macro_name+'/log/s'+str(seed).zfill(4)+'.o \n')
+			#fout.write('#SBATCH --output='+job_maker_dir+'/made/'+run_macro_name+'/log/s'+str(seed).zfill(4)+'.o \n')
+			fout.write('#SBATCH --output='+workdir+'/s'+str(seed).zfill(4)+'.o \n')
 		elif 0 == line.find('#SBATCH --error=') :
-			fout.write('#SBATCH --error='+job_maker_dir+'/made/'+run_macro_name+'/log/s'+str(seed).zfill(4)+'.e \n')
+			#fout.write('#SBATCH --error='+job_maker_dir+'/made/'+run_macro_name+'/log/s'+str(seed).zfill(4)+'.e \n')
+			fout.write('#SBATCH --error='+workdir+'/s'+str(seed).zfill(4)+'.e \n')
 		else:
 			fout.write(line)
 	fout.close()
 	os.chmod(foutname, 0o755)
-	os.makedirs('./made/'+run_macro_name+'/'+'log', exist_ok=True)
+	#os.makedirs('./made/'+run_macro_name+'/'+'log', exist_ok=True)
 
 
 def make_throw(NofBatchs):
@@ -69,6 +71,7 @@ def make_throw(NofBatchs):
 	for i in range(1,NofBatchs+1):
 		batchpath = job_maker_dir+'/made/'+run_macro_name+'/shell/s'+str(i).zfill(4)+'.sh'
 		fout.write('sbatch '+batchpath+'\n')
+		fout.write('sleep 1s\n')
 
 	fout.close()
 	os.chmod(foutname, 0o755)
