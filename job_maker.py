@@ -5,10 +5,10 @@ import os
 
 # global variables
 run_macro_name = 'run_Cryostat_neutron_U238' # run macro name of Geant4
-workdir='/dali/lgrandi/mzks/mc/mc1/workdir' # Geant4 working directory witch has binary
+workdir='/dali/lgrandi/mzks/mc/mc8/workdir' # Geant4 working directory witch has binary
 job_maker_dir = '/dali/lgrandi/mzks/mc/job_maker' # ROOT of this script
-NevtEachBatch = 1000 # Number of Event in each batch
-NBatch = 100 # total batch number
+NevtEachBatch = 100 # Number of Event in each batch
+NBatch = 10 # total batch number
 
 def make_macro(seed):
 
@@ -55,6 +55,8 @@ def make_shell(seed):
 		elif 0 == line.find('#SBATCH --error=') :
 			#fout.write('#SBATCH --error='+job_maker_dir+'/made/'+run_macro_name+'/log/s'+str(seed).zfill(4)+'.e \n')
 			fout.write('#SBATCH --error='+workdir+'/s'+str(seed).zfill(4)+'.e \n')
+		elif 0 == line.find('	-i ${workdir}/output') :
+			fout.write('    -i ${workdir}/output'+str(seed).zfill(4)+' \\\n')
 		else:
 			fout.write(line)
 	fout.close()
