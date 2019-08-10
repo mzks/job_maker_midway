@@ -4,12 +4,19 @@
 import os
 
 # global variables
-run_macro_name = 'run_Cryostat_neutron_U238' # run macro name of Geant4
-mc_dir_name = 'mc36'
-workdir='/dali/lgrandi/mzks/mc/'+mc_dir_name+'/workdir' # Geant4 working directory witch has binary
-job_maker_dir = '/dali/lgrandi/mzks/mc/job_maker' # ROOT of this script
+
+mc_dir_name = 'mc31'
 NevtEachBatch = 10000 # Number of Event in each batch
 NBatch = 500 # total batch number
+run_macro_name = 'run_Cryostat_neutron_U238' # run macro name of Geant4
+
+workdir='/dali/lgrandi/mzks/mc/'+mc_dir_name+'/workdir' # Geant4 working directory witch has binary
+job_maker_dir = '/dali/lgrandi/mzks/mc/job_maker' # ROOT of this script
+
+NSmallBatch = 200
+IntervalSmallBatch = '2h'
+SeedStartNumber = 1
+
 
 def make_macro(seed):
 
@@ -65,26 +72,45 @@ def make_shell(seed):
 	#os.makedirs('./product/'+run_macro_name+'/'+mc_dir_name+'/'+'log', exist_ok=True)
 
 
-def make_throw(NofBatchs):
+def make_throw(NofBatchs, SeedStartNumber):
 
 	foutname = './product/'+run_macro_name+'/'+mc_dir_name+'/throw.sh'
 	fout = open(foutname, mode='w')
 
 	fout.write('#! /bin/bash \n')
-	for i in range(1,NofBatchs+1):
+	for i in range(SeedStartNumber,NofBatchs+SeedStartNumber):
 		batchpath = job_maker_dir+'/product/'+run_macro_name+'/'+mc_dir_name+'/shell/s'+str(i).zfill(4)+'.sh'
 		fout.write('sbatch '+batchpath+'\n')
 		fout.write('sleep 1s\n')
+		
+		if i % NSmallBatch == 0 and i != NBatch+SeedStartNumber-1:
+			fout.write('sleep '+IntervalSmallBatch+' \n')
+
 
 	fout.close()
 	os.chmod(foutname, 0o755)
 
-if __name__ == "__main__":
 
-	
-	for i in range(1, NBatch+1):
+def print_config():
+
+	print('.........................................................')
+	print('Target mc dir name:', mc_dir_name)
+	print('Total', '{:.1E}'.format(NBatch*NevtEachBatch), 'evt. generated')
+	print('Run macro: ', run_macro_name)
+	print('Working dir:',workdir)
+	print('Total Batch:', NBatch, '*', NevtEachBatch, 'evt. generated')
+	print('N of small batch:',NSmallBatch, 'in each', IntervalSmallBatch)
+	print('Seeds start from ', SeedStartNumber, 'to', SeedStartNumber+NBatch-1)
+	print('.........................................................')
+
+
+
+if __name__ == "__main__":
+ 
+	print_config()	
+	for i in range(SeedStartNumber, NBatch+SeedStartNumber):
 	
 		make_macro(i)
 		make_shell(i)
 
-	make_throw(NBatch)
+	make_throw(NBatch, SeedStartNumber)
