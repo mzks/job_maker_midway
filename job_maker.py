@@ -5,10 +5,10 @@ import os
 
 # global variables
 run_macro_name = 'run_Cryostat_neutron_U238' # run macro name of Geant4
-workdir='/dali/lgrandi/mzks/mc/mc8/workdir' # Geant4 working directory witch has binary
+workdir='/dali/lgrandi/mzks/mc/mc36/workdir' # Geant4 working directory witch has binary
 job_maker_dir = '/dali/lgrandi/mzks/mc/job_maker' # ROOT of this script
-NevtEachBatch = 100 # Number of Event in each batch
-NBatch = 10 # total batch number
+NevtEachBatch = 10000 # Number of Event in each batch
+NBatch = 500 # total batch number
 
 def make_macro(seed):
 
