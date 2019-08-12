@@ -33,7 +33,7 @@ cd ${workdir}
 # execute XENON G4
 ${workdir}/xenon1t_G4 \
     -d XENONnT \
-    -p ${workdir}/macros/XENONnT/preinit_TPC_GdWater.mac \
+    -p ${workdir}/macros/XENONnT/preinit_nVeto.mac \
     -b ${workdir}/macros/XENONnT/preinit_B_none.mac \
     -s ${workdir}/macros/XENONnT/setup_optical.mac \
     -f ${workdir}/macros/XENONnT/run_Cryostat_neutron_U238.mac \
