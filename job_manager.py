@@ -10,11 +10,11 @@ import subprocess
 
 mc_dir_name = 'mc44'
 NevtEachBatch = 10000 # Number of Event in each batch
-NBatch = 500 # total batch number
+NBatch = 100 # total batch number
 run_macro_name = 'run_Cryostat_neutron_U238' # run macro name of Geant4
 
 workdir='/dali/lgrandi/mzks/mc/'+mc_dir_name+'/workdir' # Geant4 working directory witch has binary
-job_maker_dir = '/dali/lgrandi/mzks/mc/job_maker' # ROOT of this script
+job_maker_dir = '/dali/lgrandi/mzks/mc/job_manager' # ROOT of this script
 
 job_assign_thre = 100
 n_submit_job_once = 10

@@ -2,11 +2,11 @@
 #SBATCH --job-name=run.sh
 #SBATCH --output=run.sh.o
 #SBATCH --error=run.sh.e
-#SBATCH --time=3:00:00
+#SBATCH --time=16:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --account=pi-lgrandi
-#SBATCH --mem-per-cpu=4000
+#SBATCH --mem-per-cpu=2000
 #SBATCH --qos=dali
 #SBATCH --partition=dali
 
@@ -16,7 +16,7 @@ SECONDS=0
 # specify the project name
 
 workdir=/dali/lgrandi/mzks/mc/mc1/workdir
-job_dir=/dali/lgrandi/mzks/mc/job_maker
+job_dir=/dali/lgrandi/mzks/mc/job_manager
 
 # load modules required by XENON G4
 module load midway2
