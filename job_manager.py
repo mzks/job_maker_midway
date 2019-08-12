@@ -19,7 +19,37 @@ job_maker_dir = '/dali/lgrandi/mzks/mc/job_maker' # ROOT of this script
 job_assign_thre = 100
 n_submit_job_once = 10
 SeedStartNumber = 1
-sleeping_second = 300
+sleeping_second = 60
+
+
+def manage_jobs():
+
+    print_config()
+
+    # Prepare Scripts
+    for i in range(SeedStartNumber, NBatch+SeedStartNumber):
+
+        make_macro(i)
+        make_shell(i)
+
+    i_job_seed = SeedStartNumber
+
+    while(True):
+        print(datetime.datetime.now())
+        num_stored_jobs = int(subprocess.check_output("squeue -u mzks | wc -l", shell=True)) - 1
+        print('the current stored jobs', num_stored_jobs)
+
+        if num_stored_jobs < job_assign_thre:
+            for i in range(n_submit_job_once):
+                submit_jobs(i_job_seed)
+                i_job_seed += 1
+
+        if i_job_seed >= SeedStartNumber + NBatch:
+            break
+
+        time.sleep(sleeping_second)
+
+    print('Done!')
 
 
 def make_macro(seed):
@@ -38,6 +68,7 @@ def make_macro(seed):
         else:
             fout.write(line)
     fout.close()
+
 
 def make_shell(seed):
 
@@ -92,37 +123,14 @@ def print_config():
 
 def submit_jobs(iSeed):
 
-        print('submit', iSeed)
-        batchpath = 'sbatch '+job_maker_dir+'/product/'+run_macro_name+'/'+mc_dir_name+'/shell/s'+str(iSeed).zfill(4)+'.sh'
-        print(batchpath)
-        out = subprocess.check_output(batchpath, shell=True)
-        print(out)
+    print('submit', iSeed)
+    batchpath = 'sbatch '+job_maker_dir+'/product/'+run_macro_name+'/'+mc_dir_name+'/shell/s'+str(iSeed).zfill(4)+'.sh'
+    print(batchpath)
+    out = subprocess.check_output(batchpath, shell=True)
+    print(out)
+
 
 if __name__ == "__main__":
+    manage_jobs()
 
-    print_config()
-    # Prepare Scripts
-    for i in range(SeedStartNumber, NBatch+SeedStartNumber):
-
-        make_macro(i)
-        make_shell(i)
-
-    i_job_seed = SeedStartNumber
-
-    while(True):
-        print(datetime.datetime.now())
-        num_stored_jobs = int(subprocess.check_output("squeue -u mzks | wc -l", shell=True)) - 1
-        print('the current stored jobs', num_stored_jobs)
-
-        if num_stored_jobs < job_assign_thre:
-            for i in range(n_submit_job_once):
-                submit_jobs(i_job_seed)
-                i_job_seed += 1
-
-        if i_job_seed >= SeedStartNumber + NBatch:
-            break
-
-        time.sleep(sleeping_second)
-
-    print('Done!')
 
