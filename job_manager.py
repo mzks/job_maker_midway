@@ -10,15 +10,16 @@ import subprocess
 
 mc_dir_name = 'mc44'
 NevtEachBatch = 10000 # Number of Event in each batch
-NBatch = 100 # total batch number
+NBatch = 500 # total batch number
 run_macro_name = 'run_Cryostat_neutron_U238' # run macro name of Geant4
 
 workdir='/dali/lgrandi/mzks/mc/'+mc_dir_name+'/workdir' # Geant4 working directory witch has binary
 job_maker_dir = '/dali/lgrandi/mzks/mc/job_maker' # ROOT of this script
 
-NSmallBatch = 200
-IntervalSmallBatch = '2h'
+job_assign_thre = 100
+n_submit_job_once = 10
 SeedStartNumber = 1
+sleeping_second = 300
 
 
 def make_macro(seed):
@@ -76,25 +77,6 @@ def make_shell(seed):
     #os.makedirs('./product/'+run_macro_name+'/'+mc_dir_name+'/'+'log', exist_ok=True)
 
 
-def make_throw(NofBatchs, SeedStartNumber):
-
-    foutname = './product/'+run_macro_name+'/'+mc_dir_name+'/throw.sh'
-    fout = open(foutname, mode='w')
-
-    fout.write('#! /bin/bash \n')
-    for i in range(SeedStartNumber,NofBatchs+SeedStartNumber):
-        batchpath = job_maker_dir+'/product/'+run_macro_name+'/'+mc_dir_name+'/shell/s'+str(i).zfill(4)+'.sh'
-        fout.write('sbatch '+batchpath+'\n')
-        fout.write('sleep 1s\n')
-
-        if i % NSmallBatch == 0 and i != NBatch+SeedStartNumber-1:
-            fout.write('sleep '+IntervalSmallBatch+' \n')
-
-
-    fout.close()
-    os.chmod(foutname, 0o755)
-
-
 def print_config():
 
     print('.........................................................')
@@ -103,10 +85,9 @@ def print_config():
     print('Run macro: ', run_macro_name)
     print('Working dir:',workdir)
     print('Total Batch:', NBatch, '*', NevtEachBatch, 'evt. generated')
-    print('N of small batch:',NSmallBatch, 'in each', IntervalSmallBatch)
     print('Seeds start from ', SeedStartNumber, 'to', SeedStartNumber+NBatch-1)
+    print('MaxSubmissionJobs:', job_assign_thre,'checked in each', sleeping_second, 'sec.')
     print('.........................................................')
-
 
 
 def submit_jobs(iSeed):
@@ -125,10 +106,7 @@ if __name__ == "__main__":
 
         make_macro(i)
         make_shell(i)
-    # make_throw(NBatch, SeedStartNumber)
 
-    job_assign_thre = 50
-    n_submit_job_once = 10
     i_job_seed = SeedStartNumber
 
     while(True):
@@ -144,5 +122,7 @@ if __name__ == "__main__":
         if i_job_seed >= SeedStartNumber + NBatch:
             break
 
-        time.sleep(60)
+        time.sleep(sleeping_second)
+
+    print('Done!')
 

@@ -3,15 +3,11 @@
 This tool is used to make job-script for XENONnT MC.
 
 ## Simple usage
-Edit the header of `job_maker.py`, then,
+Edit the header of `job_manager.py`, then,
 ```
-python job_maker.py
+./run.sh
 ```
-All scpripts will be created in `made/<macro name>/` directory.
-To submit the jobs,
-```
-> ./made/<macro name>/throw.sh
-```
+All scpripts will be created in `product/<macro name>/` directory.
 
 ## Additional information
 As written as, this `job_maker.py` replaces sentences of the original macro and shell script.
