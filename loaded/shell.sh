@@ -42,9 +42,9 @@ ${workdir}/xenon1t_G4 \
 
 # execute nSort
 ${workdir}/nSort \
-	-d XENONnT \
-	-i ${workdir}/output \
-	-s 3
+    -d XENONnT \
+    -i ${workdir}/output \
+    -s 3
 
 # cp output files to disk
 # mv -f /scratch/midway2/ryuichi/mc/${version}/${name}/${name}_${param}_0.root      /project/lgrandi/ryuichi/xenonnt/mc/${version}/${name}/g4_out/${param}

@@ -1,3 +1,5 @@
 made/*
 product/*
 *.log
+nohup.out
+*.err

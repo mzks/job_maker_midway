@@ -9,13 +9,13 @@ import argparse
 
 # global variables
 
-mc_dir_name = 'mc44'
+mc_dir_name = 'mc41'
 n_evt_each_batch = 10000 # Number of Event in each batch
 n_batch = 100 # total batch number
 run_macro_name = 'run_Cryostat_neutron_U238' # run macro name of Geant4
 
 job_assign_thre = 100
-n_submit_job_once = 10
+n_submit_job_once = 5
 n_start_seed = 1
 sleeping_second = 60
 
@@ -33,6 +33,7 @@ def manage_jobs():
     global n_submit_job_once
     global n_start_seed
     global sleeping_second
+    global workdir
 
     parser = argparse.ArgumentParser(description='Job-manager of mc at midway2')
 
@@ -57,6 +58,8 @@ def manage_jobs():
     n_submit_job_once = args.once
     n_start_seed = args.init
     sleeping_second = args.sleep
+
+    workdir='/dali/lgrandi/mzks/mc/'+mc_dir_name+'/workdir' # Geant4 working directory witch has binary
 
     print_config()
 
@@ -132,7 +135,7 @@ def make_shell(seed):
         elif 0 == line.find('#SBATCH --error=') :
             #fout.write('#SBATCH --error='+job_manager_dir+'/product/'+run_macro_name+'/'+mc_dir_name+'/log/s'+str(seed).zfill(4)+'.e \n')
             fout.write('#SBATCH --error='+workdir+'/s'+str(seed).zfill(4)+'.e \n')
-        elif 0 == line.find('   -i ${workdir}/output') :
+        elif 0 == line.find('    -i ${workdir}/output') :
             fout.write('    -i ${workdir}/output'+str(seed).zfill(4)+' \\\n')
         else:
             fout.write(line)

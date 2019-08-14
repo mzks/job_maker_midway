@@ -17,9 +17,12 @@
 #  -i INIT, --init INIT  Initial seed number
 #  -s SLEEP, --sleep SLEEP
 #                        sleeping second in each loop
-#
+rm -rf out.log
+rm -rf out.err
+
 nohup sh -c ' \
-python3 -u job_manager.py -d mc41 < /dev/null > out.log 2>out.err; \
-python3 -u job_manager.py -d mc45 < /dev/null > out.log 2>out.err; \
-python3 -u job_manager.py -d mc46 < /dev/null > out.log 2>out.err; \
+python3 -u job_manager.py -d mc44 -i 1 -n 10 < /dev/null >> out.log 2>>out.err; \
+python3 -u job_manager.py -d mc41 < /dev/null >> out.log 2>>out.err; \
+python3 -u job_manager.py -d mc45 < /dev/null >> out.log 2>>out.err; \
+python3 -u job_manager.py -d mc46 < /dev/null >> out.log 2>>out.err; \
 ' &
