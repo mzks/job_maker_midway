@@ -128,7 +128,7 @@ def make_shell(seed):
         elif 0 == line.find('workdir=') :
             fout.write('workdir='+workdir+'\n')
         elif 0 == line.find('#SBATCH --job-name=') :
-            fout.write('#SBATCH --job-name=s'+str(seed).zfill(4)+'.sh\n')
+            fout.write('#SBATCH --job-name='+mc_dir_name+str(seed).zfill(4)+'\n')
         elif 0 == line.find('#SBATCH --output=') :
             #fout.write('#SBATCH --output='+job_manager_dir+'/product/'+run_macro_name+'/'+mc_dir_name+'/log/s'+str(seed).zfill(4)+'.o \n')
             fout.write('#SBATCH --output='+workdir+'/s'+str(seed).zfill(4)+'.o \n')
