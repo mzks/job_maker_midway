@@ -6,6 +6,7 @@ filterwarnings('ignore')
 from datetime import datetime
 from subprocess import check_output
 import pandas as pd
+import argparse
 
 def run_command():
     out = check_output('squeue > output_squeue.txt', shell=True)
@@ -20,10 +21,7 @@ def read_csv():
     df = df.drop("others2", axis=1)
     return df
 
-def summary(df):
-
-    part = 'dali'
-    me = 'mzks'
+def summary(df, me, part):
 
     df_part = df.query('partition==@part')
     df_me = df.query('user==@me')
@@ -53,8 +51,15 @@ def summary(df):
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser(description='Job-watcher')
+
+    parser.add_argument('-u','--user', default = 'mzks', help='user name')
+    parser.add_argument('-p','--partition', default = 'dali', help='partition name')
+
+    args = parser.parse_args()
+
     run_command()
     df = read_csv()
-    summary(df)
+    summary(df, args.user, args.partition)
     rm_tmp()
 
